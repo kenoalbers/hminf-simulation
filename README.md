@@ -22,3 +22,9 @@ Run the project:
 ```
 python -m app
 ```
+
+## Contributing
+Please consider using conventional commits and python best practices for better consistency.
+
+## License
+This project is licensed under the MIT license.
