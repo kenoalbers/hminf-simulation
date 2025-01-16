@@ -1,1 +1,1 @@
-from .block_plot_view import BlockPlotView
+from .block_simulation_view import BlockSimulationView
