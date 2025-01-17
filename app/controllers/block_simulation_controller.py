@@ -1,5 +1,3 @@
-import numpy as np
-
 from app.models import BlockSimulationModel
 from app.views import BlockSimulationView
 
@@ -10,6 +8,9 @@ class BlockSimulationController:
         self.view = view
 
     def run(self):
+        self.initialize_view()
+
+    def initialize_view(self):
         self.view.display(self.model.width, self.model.angle)
 
     def place_block(self):
