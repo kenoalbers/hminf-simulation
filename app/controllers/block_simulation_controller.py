@@ -10,9 +10,10 @@ class BlockSimulationController:
         self.view = view
 
     def run(self):
-        self.view.display(self.model)
+        self.view.display(self.model.width, self.model.angle)
 
+    def place_block(self):
+        pass
 
-
-    def stop(self):
+    def _update_view(self):
         pass

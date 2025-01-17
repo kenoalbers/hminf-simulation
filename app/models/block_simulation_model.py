@@ -4,11 +4,15 @@ class BlockSimulationModel:
                  angle: float = None,
                  width: float = None,
                  coefficient_still: float = None,
-                 coefficient_moving: float = None):
+                 coefficient_moving: float = None,
+                 block1_position: (float, float) = None,
+                 block2_position: (float, float) = None):
         self.__angle = angle
         self.__width = width
         self.__coefficient_still = coefficient_still
         self.__coefficient_moving = coefficient_moving
+        self.__block1_position = block1_position
+        self.__block2_position = block2_position
 
     ### Getter ###
     @property
