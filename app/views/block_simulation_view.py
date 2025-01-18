@@ -1,10 +1,8 @@
 import logging.config
-from typing import Any
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
-from matplotlib.figure import Figure
 
 from app.models import BlockSimulationModel
 from matplotlib.widgets import Slider, Button
