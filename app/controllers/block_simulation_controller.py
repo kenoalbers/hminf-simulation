@@ -23,6 +23,3 @@ class BlockSimulationController:
     def update_width(self, value):
         self.model.width = value
         self.view.update_view(self.model)
-
-    def _update_view(self):
-        pass
