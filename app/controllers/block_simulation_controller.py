@@ -9,19 +9,24 @@ class BlockSimulationController:
 
     def run(self):
         self.view.initialize_view(self.model)
-        self.view.display()
+
+        # Connect widgets to methods
+        self.view.angle_slider.on_changed(self.update_angle)
+        self.view.width_slider.on_changed(self.update_width)
+
         self.view.show()
 
     def update_angle(self, value):
        # self.model.angle = value
         pass
 
+    def update_angle(self, value):
+        self.model.angle = value
+        self.view.update_view(self.model)
+
     def update_width(self, value):
         self.model.width = value
-
-
-    def place_block(self):
-        pass
+        self.view.update_view(self.model)
 
     def _update_view(self):
         pass
