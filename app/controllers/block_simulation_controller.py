@@ -17,10 +17,6 @@ class BlockSimulationController:
         self.view.show()
 
     def update_angle(self, value):
-       # self.model.angle = value
-        pass
-
-    def update_angle(self, value):
         self.model.angle = value
         self.view.update_view(self.model)
 
