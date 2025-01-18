@@ -1,8 +1,10 @@
+import numpy as np
+
 
 class BlockSimulationModel:
     def __init__(self,
-                 angle: float = None,
-                 width: float = None,
+                 angle: float = 45,
+                 width: float = 0.3,
                  coefficient_still: float = None,
                  coefficient_moving: float = None,
                  block1_position: (float, float) = None,
@@ -30,6 +32,10 @@ class BlockSimulationModel:
     @property
     def coefficient_moving(self):
         return self.__coefficient_moving
+
+    # TODO: Refac
+    def get_opposite_length(self, adjacent):
+        return np.tan(np.radians(self.__angle)) * adjacent
 
     ### Setter ###
     @angle.setter

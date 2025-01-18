@@ -8,10 +8,17 @@ class BlockSimulationController:
         self.view = view
 
     def run(self):
-        self.initialize_view()
+        self.view.initialize_view(self.model)
+        self.view.display()
+        self.view.show()
 
-    def initialize_view(self):
-        self.view.display(self.model.width, self.model.angle)
+    def update_angle(self, value):
+       # self.model.angle = value
+        pass
+
+    def update_width(self, value):
+        self.model.width = value
+
 
     def place_block(self):
         pass
