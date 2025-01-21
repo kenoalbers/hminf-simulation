@@ -13,27 +13,27 @@ logging.getLogger(__name__)
 
 class BlockSimulationView:
     def __init__(self):
-        self.__figure, self.__axes = plt.subplots(figsize=(9, 9), layout='constrained')
+        self.figure, self.__axes = plt.subplots(figsize=(9, 9), layout='constrained')
 
         # Plot options
         self.__axes.set_visible(False)
-        self.__axes = self.__figure.add_axes((0.55, 0.1, 0.4, 0.8))
+        self.__axes = self.figure.add_axes((0.55, 0.1, 0.4, 0.8))
         self.__axes.set_title('Block Simulation')
         self.__axes.axis([0, 2, 0, 4])
         self.__axes.set_aspect('equal', adjustable='box')
 
         # Patches
         self.__triangle_patch = None
-        self.__sliding_block_patch = None
+        self.sliding_block_patch = None
         self.__collision_block_patch = None
 
         # Widgets
         self.angle_slider = None
         self.width_slider = None
-        self.__coefficient_still_slider = None
-        self.__coefficient_moving_slider = None
+        self.coefficient_still_slider = None
+        self.coefficient_moving_slider = None
 
-        self.__start_button = None
+        self.start_button = None
 
     def initialize_view(self, model: BlockSimulationModel):
         # Print triangle
@@ -41,35 +41,35 @@ class BlockSimulationView:
         self.__axes.add_patch(self.__triangle_patch)
 
         # Print block
-        self.__sliding_block_patch = patches.Rectangle((1, 2), model.width, 0.1, angle=-model.angle, color='red')
-        self.__axes.add_patch(self.__sliding_block_patch)
+        self.sliding_block_patch = patches.Rectangle((1, 2), model.width, 0.1, angle=-model.angle, color='red')
+        self.__axes.add_patch(self.sliding_block_patch)
 
         # Collision block
         collision_block_patch = patches.Rectangle((1, 0), 0.3, 0.1, color='green')
         self.__axes.add_patch(collision_block_patch)
 
-        self.angle_slider = self._display_angle_slider(self.__figure, model.angle)
+        self.angle_slider = self._display_angle_slider(self.figure, model.angle)
 
         # Coefficient of friction - still
-        self.__coefficient_still_slider = self._display_coefficient_still_slider(self.__figure)
+        self.coefficient_still_slider = self._display_coefficient_still_slider(self.figure)
 
         # Coefficient of friction - moving
-        self.__coefficient_moving_slider = self._display_coefficient_moving_slider(self.__figure)
+        self.coefficient_moving_slider = self._display_coefficient_moving_slider(self.figure)
 
         # Width slider
-        self.width_slider = self._display_width_slider(self.__figure, model.width)
+        self.width_slider = self._display_width_slider(self.figure, model.width)
 
-        self.__start_button = Button(self.__figure.add_axes((0.18, 0.3, 0.2, 0.04)), 'Place Block (Start)')
+        self.start_button = Button(self.figure.add_axes((0.18, 0.3, 0.2, 0.04)), 'Place Block (Start)')
 
     def update_view(self, model: BlockSimulationModel):
         # Patches to update
         self.__triangle_patch.set_xy(((0.0, 0.0), (1.0, 0.0), (0.0, model.get_opposite_length(1))))
-        self.__sliding_block_patch.set_angle(-model.angle)
+        self.sliding_block_patch.set_angle(-model.angle)
 
-        self.__sliding_block_patch.set_width(model.width)
+        self.sliding_block_patch.set_width(model.width)
 
         # Update
-        self.__figure.canvas.draw_idle()
+        self.figure.canvas.draw_idle()
 
     def show(self):
         plt.grid(True)
