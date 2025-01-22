@@ -28,17 +28,32 @@ class BlockSimulationController:
         self.animation = FuncAnimation(
             fig=self.view.figure,
             func=self.update_animation,
-            frames=200,
-            interval=20,
+            init_func=self.initialize_animation,
+            frames=1000,
+            interval=10,
             repeat=False
         )
+
+        # Update
+        self.view.figure.canvas.draw_idle()
+
+    def initialize_animation(self):
+        self.view.angle_slider.set_active(False)
+        self.view.width_slider.set_active(False)
+        self.view.coefficient_still_slider.set_active(False)
+        self.view.coefficient_moving_slider.set_active(False)
+
+        self.view.start_button.ax.set_visible(False)
+        self.view.start_button.set_active(False)
+
+        return self.view.angle_slider
 
     def update_animation(self, frame):
         self.model.angle += 1
 
         self.view.sliding_block_patch.set_angle(-self.model.angle)
 
-        return (self.view.sliding_block_patch,)
+        return self.view.sliding_block_patch
 
     # Update widgets functionality
     def update_angle(self, value):
