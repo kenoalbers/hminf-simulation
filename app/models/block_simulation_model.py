@@ -5,8 +5,8 @@ class BlockSimulationModel:
     def __init__(self,
                  angle: float = 45,
                  width: float = 0.3,
-                 coefficient_still: float = None,
-                 coefficient_moving: float = None,
+                 coefficient_still: float = 0.3,
+                 coefficient_moving: float = 0.3,
                  block1_position: (float, float) = None,
                  block2_position: (float, float) = None):
         self.__angle = angle
@@ -33,9 +33,13 @@ class BlockSimulationModel:
     def coefficient_moving(self):
         return self.__coefficient_moving
 
-    # TODO: Refac
-    def get_opposite_length(self, adjacent):
-        return np.tan(np.radians(self.__angle)) * adjacent
+    @property
+    def block1_position(self):
+        return self.__block1_position
+
+    @property
+    def block2_position(self):
+        return self.__block2_position
 
     ### Setter ###
     @angle.setter
@@ -53,3 +57,20 @@ class BlockSimulationModel:
     @coefficient_moving.setter
     def coefficient_moving(self, value):
         self.__coefficient_still = value
+
+    @block1_position.setter
+    def block1_position(self, value):
+        self.__block1_position = value
+
+    @block2_position.setter
+    def block2_position(self, value):
+        self.__block2_position = value
+
+    # Helper Methods
+    def get_opposite_length(self, adjacent):
+        return np.tan(np.radians(self.__angle)) * adjacent
+
+    def get_block1_center(self):
+        center_x = self.block1_position[0] / self.width
+        center_y = self.block1_position[1] / 0.1
+        return center_x, center_y

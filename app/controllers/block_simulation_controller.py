@@ -1,6 +1,8 @@
+import numpy as np
+
 from matplotlib.animation import FuncAnimation
 
-from app.models import BlockSimulationModel
+from app.models import BlockSimulationModel, ForceModel
 from app.views import BlockSimulationView
 
 
@@ -9,15 +11,16 @@ class BlockSimulationController:
         self.model = model
         self.view = view
         self.animation = None
+        self.forces = ForceModel()
 
     def run(self):
         self.view.initialize_view(self.model)
 
         # Connect widgets to methods
-        self.view.angle_slider.on_changed(self.update_angle)
-        self.view.width_slider.on_changed(self.update_width)
-        self.view.coefficient_still_slider.on_changed(self.update_coefficient_still)
-        self.view.coefficient_moving_slider.on_changed(self.update_coefficient_moving)
+        self.view.angle_slider.on_changed(self._update_angle)
+        self.view.width_slider.on_changed(self._update_width)
+        self.view.coefficient_still_slider.on_changed(self._update_coefficient_still)
+        self.view.coefficient_moving_slider.on_changed(self._update_coefficient_moving)
 
         # Start animation on button clicked
         self.view.start_button.on_clicked(self.start_animation)
@@ -30,7 +33,7 @@ class BlockSimulationController:
             func=self.update_animation,
             init_func=self.initialize_animation,
             frames=1000,
-            interval=10,
+            interval=33.33,
             repeat=False
         )
 
@@ -38,36 +41,86 @@ class BlockSimulationController:
         self.view.figure.canvas.draw_idle()
 
     def initialize_animation(self):
+        # Deactivate sliders
         self.view.angle_slider.set_active(False)
         self.view.width_slider.set_active(False)
         self.view.coefficient_still_slider.set_active(False)
         self.view.coefficient_moving_slider.set_active(False)
 
+        # Remove button
         self.view.start_button.ax.set_visible(False)
         self.view.start_button.set_active(False)
+
+        # Place sliding block
+        self.model.block1_position = (0, self.model.get_opposite_length(2))
+        self.view.sliding_block_patch.set_xy(self.model.block1_position)
+
+        # Mass
+        mass = self.model.width / 3
+
+        # Calculate simulated G and grade forces (width is equal to weight for simulation purposes)
+        self.forces.g_force = mass * 9.81
+        print(f'G force: {self.forces.g_force}')
+
+        self.forces.grade_force = self.forces.g_force * np.sin(np.radians(self.model.angle))
+        print(f'Grade force: {self.forces.grade_force}')
+
+        self.forces.friction_force_still = self.model.coefficient_still * self.forces.g_force * np.cos(np.radians(self.model.angle))
+        print(f'Friction force still: {self.forces.friction_force_still}')
+
+        if self.forces.grade_force > self.forces.friction_force_still:
+            self.forces.friction_force_moving = self.model.coefficient_moving * self.forces.g_force * np.cos(np.radians(self.model.angle))
+            print(f'Friction force moving: {self.forces.friction_force_moving}')
+
+            # Calculate resulting acceleration
+            resulting_force = self.forces.grade_force - self.forces.friction_force_moving
+
+            self.forces.acceleration = resulting_force / mass
+
+            if resulting_force < 0:
+                self.forces.acceleration = 0
+                print("Block won't move because of friction forces when moving.")
+
+            print(f'Acceleration: {self.forces.acceleration}')
+
+        else:
+            print("Block won't move because of friction forces when standing still.")
+
 
         return self.view.angle_slider
 
     def update_animation(self, frame):
-        self.model.angle += 1
+        time = frame / 50
 
-        self.view.sliding_block_patch.set_angle(-self.model.angle)
+        # Calculate progress with acceleration
+        progress = 0.5 * self.forces.acceleration * time ** 2
+
+        self.model.block1_position = (progress, self.model.get_opposite_length(2 - progress))
+
+        if (self.model.block1_position[1] - (self.model.width * np.sin(np.radians(self.model.angle)))) > 0:
+            self.view.sliding_block_patch.set_xy(self.model.block1_position)
+        else:
+            if not self.forces.collision:
+                # Calculate impuls
+                self.forces.impuls = self.model.width * self.forces.acceleration * time
+                print(f'HIT: {self.forces.impuls}')
+            self.forces.collision = True
 
         return self.view.sliding_block_patch
 
     # Update widgets functionality
-    def update_angle(self, value):
+    def _update_angle(self, value):
         self.model.angle = value
         self.view.update_view(self.model)
 
-    def update_width(self, value):
+    def _update_width(self, value):
         self.model.width = value
         self.view.update_view(self.model)
 
-    def update_coefficient_still(self, value):
+    def _update_coefficient_still(self, value):
         self.model.coefficient_still = value
         self.view.update_view(self.model)
 
-    def update_coefficient_moving(self, value):
+    def _update_coefficient_moving(self, value):
         self.model.coefficient_moving = value
         self.view.update_view(self.model)

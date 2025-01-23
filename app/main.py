@@ -10,7 +10,11 @@ logger = logging.getLogger(__name__)
 def run():
     logger.info("Welcome to the app!")
     # Simulation
-    BlockSimulationController(
-        BlockSimulationModel(),
-        BlockSimulationView()
-    ).run()
+    try:
+        BlockSimulationController(
+            BlockSimulationModel(),
+            BlockSimulationView()
+        ).run()
+    except KeyboardInterrupt:
+        print('Simulation stopped!')
+
