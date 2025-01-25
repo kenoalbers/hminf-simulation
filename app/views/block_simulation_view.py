@@ -2,8 +2,6 @@ import logging.config
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import numpy as np
-from numpy.ma.core import resize
 
 from app.models import BlockSimulationModel
 from matplotlib.widgets import Slider, Button
@@ -47,8 +45,11 @@ class BlockSimulationView:
         self.axes.add_patch(self.sliding_block_patch)
 
         # Collision block
-        collision_block_patch = patches.Rectangle((2, 0), 0.3, 0.1, color='green')
-        self.axes.add_patch(collision_block_patch)
+        self.collision_block_patch = patches.Rectangle(model.block2_position, 0.3, 0.1, color='green')
+        self.axes.add_patch(self.collision_block_patch)
+
+        inelastic_collision_patch = patches.Rectangle((2,0), 0.01, 0.2, color='grey')
+        self.axes.add_patch(inelastic_collision_patch)
 
         self.angle_slider = self._display_angle_slider(self.figure, model.angle)
 

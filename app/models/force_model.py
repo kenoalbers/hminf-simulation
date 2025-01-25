@@ -6,7 +6,10 @@ class ForceModel:
                  friction_force_still: float = 0.0,
                  friction_force_moving: float = 0.0,
                  acceleration: float = 0.0,
+                 block2_acceleration: float = 0.0,
+                 block2_velocity: float = 0.0,
                  collision: bool = False,
+                 collision_frame: int = None,
                  impuls: float = 0.0
                  ):
         self.__g_force = g_force
@@ -14,7 +17,10 @@ class ForceModel:
         self.__friction_force_still = friction_force_still
         self.__friction_force_moving = friction_force_moving
         self.__acceleration = acceleration
+        self.__block2_acceleration = block2_acceleration
+        self.__block2_velocity = block2_velocity
         self.__collision = collision
+        self.__collision_frame = collision_frame
         self.__impuls = impuls
 
     @property
@@ -38,8 +44,20 @@ class ForceModel:
         return self.__acceleration
 
     @property
+    def block2_acceleration(self):
+        return self.__block2_acceleration
+
+    @property
+    def block2_velocity(self):
+        return self.__block2_velocity
+
+    @property
     def collision(self):
         return self.__collision
+
+    @property
+    def collision_frame(self):
+        return self.__collision_frame
 
     @property
     def impuls(self):
@@ -68,6 +86,18 @@ class ForceModel:
     @collision.setter
     def collision(self, value):
         self.__collision = value
+
+    @block2_acceleration.setter
+    def block2_acceleration(self, value):
+        self.__block2_acceleration = value
+
+    @block2_velocity.setter
+    def block2_velocity(self, value):
+        self.__block2_velocity = value
+
+    @collision_frame.setter
+    def collision_frame(self, value):
+        self.__collision_frame = value
 
     @impuls.setter
     def impuls(self, value):

@@ -65,11 +65,13 @@ class BlockSimulationController:
         self.forces.grade_force = self.forces.g_force * np.sin(np.radians(self.model.angle))
         print(f'Grade force: {self.forces.grade_force}')
 
-        self.forces.friction_force_still = self.model.coefficient_still * self.forces.g_force * np.cos(np.radians(self.model.angle))
+        self.forces.friction_force_still = self.model.coefficient_still * self.forces.g_force * np.cos(
+            np.radians(self.model.angle))
         print(f'Friction force still: {self.forces.friction_force_still}')
 
         if self.forces.grade_force > self.forces.friction_force_still:
-            self.forces.friction_force_moving = self.model.coefficient_moving * self.forces.g_force * np.cos(np.radians(self.model.angle))
+            self.forces.friction_force_moving = self.model.coefficient_moving * self.forces.g_force * np.cos(
+                np.radians(self.model.angle))
             print(f'Friction force moving: {self.forces.friction_force_moving}')
 
             # Calculate resulting acceleration
@@ -86,7 +88,6 @@ class BlockSimulationController:
         else:
             print("Block won't move because of friction forces when standing still.")
 
-
         return self.view.angle_slider
 
     def update_animation(self, frame):
@@ -97,13 +98,41 @@ class BlockSimulationController:
 
         self.model.block1_position = (progress, self.model.get_opposite_length(2 - progress))
 
+        # Check if a hit occurred
         if (self.model.block1_position[1] - (self.model.width * np.sin(np.radians(self.model.angle)))) > 0:
             self.view.sliding_block_patch.set_xy(self.model.block1_position)
         else:
+
             if not self.forces.collision:
+                # Remember frame
+                self.forces.collision_frame = frame
+
                 # Calculate impuls
-                self.forces.impuls = self.model.width * self.forces.acceleration * time
-                print(f'HIT: {self.forces.impuls}')
+                # p = m * v (v in direction of travel)
+                self.forces.impuls = (self.model.width / 3) * (
+                        (self.forces.acceleration * time) * np.cos(np.radians(self.model.angle)))
+                print(f'HIT -> Frame: {self.forces.collision_frame} Force: {self.forces.impuls}')
+
+                # Calculate start speed of collision block
+                # v_o = p / m
+                self.forces.block2_velocity = (self.forces.impuls / (0.3 / 3)) / 5
+                print(f'Initial speed block: {self.forces.block2_velocity}')
+
+                # Stopping forces
+                self.forces.block2_acceleration = -self.model.coefficient_moving * 9.81
+                print(f'Stopping motion: {self.forces.block2_acceleration}')
+            else:
+                frame_delta = (frame - self.forces.collision_frame) / 50
+                next_frame_delta = ((frame+1) - self.forces.collision_frame) / 50
+
+                progress_collision = (self.model.block2_position[0] + self.forces.block2_velocity * frame_delta + 0.5 * self.forces.block2_acceleration * frame_delta ** 2)
+                next_collision = (self.model.block2_position[0] + self.forces.block2_velocity * next_frame_delta + 0.5 * self.forces.block2_acceleration * next_frame_delta ** 2)
+
+                if next_collision > progress_collision:
+                    self.model.block2_position = (progress_collision, 0)
+                    self.view.collision_block_patch.set_xy(self.model.block2_position)
+
+
             self.forces.collision = True
 
         return self.view.sliding_block_patch

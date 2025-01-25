@@ -8,7 +8,7 @@ class BlockSimulationModel:
                  coefficient_still: float = 0.3,
                  coefficient_moving: float = 0.3,
                  block1_position: (float, float) = None,
-                 block2_position: (float, float) = None):
+                 block2_position: (float, float) = (2,0)):
         self.__angle = angle
         self.__width = width
         self.__coefficient_still = coefficient_still
