@@ -1,1 +1,0 @@
-from .block_simulation_view import BlockSimulationView
