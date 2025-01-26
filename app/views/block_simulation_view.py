@@ -1,5 +1,4 @@
 import logging.config
-from sys import int_info
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches

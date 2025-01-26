@@ -12,6 +12,7 @@ class BlockSimulationController:
         self.view = view
         self.animation = None
         self.forces = ForceModel()
+        self.time_per_frame = 50
 
     def run(self):
         self.view.initialize_view(self.model)
@@ -56,29 +57,29 @@ class BlockSimulationController:
         self.model.block1_position = (0, self.model.get_opposite_length(2))
         self.view.sliding_block_patch.set_xy(self.model.block1_position)
 
-        # Mass
-        mass = self.model.width / 3
+        # Calculate g force (gewichtskraft)
+        self.forces.g_force = self.model.width * 9.81
+        print(f'G force (Gewichtskraft): {self.forces.g_force}')
 
-        # Calculate simulated G and grade forces (width is equal to weight for simulation purposes)
-        self.forces.g_force = mass * 9.81
-        print(f'G force: {self.forces.g_force}')
-
+        # Calculate grade force (hangabtriebskraft)
         self.forces.grade_force = self.forces.g_force * np.sin(np.radians(self.model.angle))
-        print(f'Grade force: {self.forces.grade_force}')
+        print(f'Grade (Hangabtriebskraft): {self.forces.grade_force}')
 
+        # Calculate static force (haftreibung)
         self.forces.friction_force_still = self.model.coefficient_still * self.forces.g_force * np.cos(
             np.radians(self.model.angle))
-        print(f'Friction force still: {self.forces.friction_force_still}')
+        print(f'Friction force still (Haftreibungskraft): {self.forces.friction_force_still}')
 
         if self.forces.grade_force > self.forces.friction_force_still:
-            self.forces.friction_force_moving = self.model.coefficient_moving * self.forces.g_force * np.cos(
-                np.radians(self.model.angle))
-            print(f'Friction force moving: {self.forces.friction_force_moving}')
+            # Calculate static force (gleitreibung)
+            self.forces.friction_force_moving = self.model.coefficient_moving * self.forces.g_force * np.cos(np.radians(self.model.angle))
+            print(f'Friction force moving (Gleitreibungskraft): {self.forces.friction_force_moving}')
 
-            # Calculate resulting acceleration
+            # Calculate resulting force
             resulting_force = self.forces.grade_force - self.forces.friction_force_moving
 
-            self.forces.acceleration = resulting_force / mass
+            # Calculate acceleration
+            self.forces.acceleration = resulting_force / self.model.width
 
             if resulting_force < 0:
                 self.forces.acceleration = 0
@@ -89,13 +90,13 @@ class BlockSimulationController:
         else:
             print("Block won't move because of friction forces when standing still.")
 
+        print()
         return self.view.angle_slider
 
     def update_animation(self, frame):
-        frame_time = frame / 50
 
         # Calculate progress with acceleration
-        progress = 0.5 * self.forces.acceleration * frame_time ** 2
+        progress = 0.5 * self.forces.acceleration * (frame / self.time_per_frame) ** 2
 
         self.model.block1_position = (progress, self.model.get_opposite_length(2 - progress))
 
@@ -110,21 +111,21 @@ class BlockSimulationController:
 
                 # Calculate impuls
                 # p = m * v (v in direction of travel)
-                self.forces.impuls = (self.model.width / 3) * (
-                        (self.forces.acceleration * frame_time) * np.cos(np.radians(self.model.angle)))
+                self.forces.impuls = self.model.width * (
+                    (self.forces.acceleration * (frame / self.time_per_frame)) * np.cos(np.radians(self.model.angle)))
                 print(f'HIT -> Frame: {self.forces.collision_frame} Force: {self.forces.impuls}')
 
                 # Calculate start speed of collision block
                 # v_o = p / m
-                self.forces.block2_velocity = (self.forces.impuls / (0.3 / 3)) / 10
+                self.forces.block2_velocity = (self.forces.impuls / 0.3) / 10
                 print(f'Initial speed block: {self.forces.block2_velocity}')
 
                 # Stopping forces
                 self.forces.block2_acceleration = -self.model.coefficient_moving * 9.81
-                print(f'Stopping motion {self.model.coefficient_moving}: {self.forces.block2_acceleration}')
+                print(f'Stopping acceleration: {self.model.coefficient_moving}: {self.forces.block2_acceleration}')
             else:
-                frame_delta = (frame - self.forces.collision_frame) / 50
-                next_frame_delta = ((frame+1) - self.forces.collision_frame) / 50
+                frame_delta = (frame - self.forces.collision_frame) / self.time_per_frame
+                next_frame_delta = ((frame+1) - self.forces.collision_frame) / self.time_per_frame
 
                 progress_collision = (self.model.block2_position[0] + self.forces.block2_velocity * frame_delta + 0.5 * self.forces.block2_acceleration * frame_delta ** 2)
                 next_collision = (self.model.block2_position[0] + self.forces.block2_velocity * next_frame_delta + 0.5 * self.forces.block2_acceleration * next_frame_delta ** 2)
