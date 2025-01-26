@@ -132,8 +132,6 @@ class BlockSimulationController:
                 if next_collision > progress_collision:
                     self.model.block2_position = (progress_collision, 0)
                     self.view.collision_block_patch.set_xy(self.model.block2_position)
-                else:
-                    print(self.model.block2_position[0])
 
             self.forces.collision = True
 
