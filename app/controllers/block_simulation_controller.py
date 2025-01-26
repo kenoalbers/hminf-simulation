@@ -28,6 +28,7 @@ class BlockSimulationController:
         self.view.show()
 
     def start_animation(self, event):
+        # Start matplotlib FuncAnimation
         self.animation = FuncAnimation(
             fig=self.view.figure,
             func=self.update_animation,
@@ -91,10 +92,10 @@ class BlockSimulationController:
         return self.view.angle_slider
 
     def update_animation(self, frame):
-        time = frame / 50
+        frame_time = frame / 50
 
         # Calculate progress with acceleration
-        progress = 0.5 * self.forces.acceleration * time ** 2
+        progress = 0.5 * self.forces.acceleration * frame_time ** 2
 
         self.model.block1_position = (progress, self.model.get_opposite_length(2 - progress))
 
@@ -110,17 +111,17 @@ class BlockSimulationController:
                 # Calculate impuls
                 # p = m * v (v in direction of travel)
                 self.forces.impuls = (self.model.width / 3) * (
-                        (self.forces.acceleration * time) * np.cos(np.radians(self.model.angle)))
+                        (self.forces.acceleration * frame_time) * np.cos(np.radians(self.model.angle)))
                 print(f'HIT -> Frame: {self.forces.collision_frame} Force: {self.forces.impuls}')
 
                 # Calculate start speed of collision block
                 # v_o = p / m
-                self.forces.block2_velocity = (self.forces.impuls / (0.3 / 3)) / 5
+                self.forces.block2_velocity = (self.forces.impuls / (0.3 / 3)) / 10
                 print(f'Initial speed block: {self.forces.block2_velocity}')
 
                 # Stopping forces
                 self.forces.block2_acceleration = -self.model.coefficient_moving * 9.81
-                print(f'Stopping motion: {self.forces.block2_acceleration}')
+                print(f'Stopping motion {self.model.coefficient_moving}: {self.forces.block2_acceleration}')
             else:
                 frame_delta = (frame - self.forces.collision_frame) / 50
                 next_frame_delta = ((frame+1) - self.forces.collision_frame) / 50
@@ -131,7 +132,8 @@ class BlockSimulationController:
                 if next_collision > progress_collision:
                     self.model.block2_position = (progress_collision, 0)
                     self.view.collision_block_patch.set_xy(self.model.block2_position)
-
+                else:
+                    print(self.model.block2_position[0])
 
             self.forces.collision = True
 

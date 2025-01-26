@@ -1,4 +1,5 @@
 import logging.config
+from sys import int_info
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -12,13 +13,13 @@ logging.getLogger(__name__)
 
 class BlockSimulationView:
     def __init__(self):
-        self.figure, self.axes = plt.subplots(figsize=(15, 8), layout='constrained')
+        self.figure, self.axes = plt.subplots(figsize=(15, 7), layout='constrained')
 
         # Plot options
         self.axes.set_visible(False)
         self.axes = self.figure.add_axes((0.55, 0.1, 0.4, 0.8))
         self.axes.set_title('Block Simulation')
-        self.axes.axis([0, 4, 0, 4])
+        self.axes.axis([0, 5, 0, 4])
         self.axes.set_aspect('equal', adjustable='box')
 
         # Patches
@@ -82,8 +83,8 @@ class BlockSimulationView:
     # Protected methods
     def _display_angle_slider(self, figure, initial_angle):
         return Slider(
-            ax= figure.add_axes((0.18, 0.8, 0.2, 0.04)),
-            label='Angle',
+            ax= figure.add_axes((0.18, 0.7, 0.2, 0.04)),
+            label='Angle (Degrees)',
             valmin=0,
             valmax=60,
             valinit=initial_angle,
@@ -92,8 +93,8 @@ class BlockSimulationView:
 
     def _display_width_slider(self, figure, initial_width):
         return Slider(
-            ax=figure.add_axes((0.18, 0.7, 0.2, 0.04)),
-            label='Width',
+            ax=figure.add_axes((0.18, 0.6, 0.2, 0.04)),
+            label='Width (Meters)',
             valmin=0.1,
             valmax=0.5,
             valinit=initial_width,
@@ -102,20 +103,20 @@ class BlockSimulationView:
 
     def _display_coefficient_still_slider(self, figure, initial_coefficient_still):
         return Slider(
-            ax=figure.add_axes((0.18, 0.6, 0.2, 0.04)),
+            ax=figure.add_axes((0.18, 0.5, 0.2, 0.04)),
             label='Static coefficient',
             valmin=0.1,
-            valmax=0.6,
+            valmax=0.8,
             valinit=initial_coefficient_still,
             orientation= 'horizontal'
         )
 
     def _display_coefficient_moving_slider(self, figure, initial_coefficient_moving):
         return Slider(
-            ax=figure.add_axes((0.18, 0.5, 0.2, 0.04)),
+            ax=figure.add_axes((0.18, 0.4, 0.2, 0.04)),
             label='Kinetic coefficient',
-            valmin=0.1,
-            valmax=0.6,
+            valmin=0.01,
+            valmax=0.5,
             valinit=initial_coefficient_moving,
             orientation='horizontal'
         )

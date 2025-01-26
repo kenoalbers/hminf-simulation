@@ -56,7 +56,7 @@ class BlockSimulationModel:
 
     @coefficient_moving.setter
     def coefficient_moving(self, value):
-        self.__coefficient_still = value
+        self.__coefficient_moving = value
 
     @block1_position.setter
     def block1_position(self, value):
