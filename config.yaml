@@ -1,0 +1,39 @@
+#Diese Konfigurationsdatei dient zur Vermeidung von hartkodierten Konstanten. Hierfür wird für jeden Parameter
+#ein Startwert als value festgelegt und eine Range angegeben, in dessen Bereich der Graph nach den Lotka Volterra
+#Regel sinnvolle Werte für die Differentialgleichungen darstellt.
+
+parameters:
+  prey_growth_rate: # Wachstumsrate der Beute (a)
+    value: 0.4
+    range: [0.224, 5.999]
+  prey_dying_rate: # Sterberate der Beute durch Jäger (b)
+    value: 0.05
+    range: [0.001,0.247]
+  predator_dying_rate:  # Sterberate der Jäger (c)
+    value: 0.5
+    range: [0.5, 0.5]
+  predator_growth_rate:  # Wachstumsrate der Jäger durch Beute (d)
+    value: 0.02
+    range: [0.02, 0.02]
+  food_growth_rate:  # Wachstumsrate der Nahrung (r)
+    value: 0.05
+    range: [0.05, 0.05]
+  food_consumption_rate:  # Konsumrate der Nahrung durch Beute (k)
+    value: 0.002
+    range: [0.002, 0.002]
+
+initial_conditions:
+  prey: # Anfangspopulation Beute
+    value: 40
+    range: [1, 175]
+  predators:  # Anfangspopulation Jäger
+    value: 10
+    range: [1, 49]
+  food:  # Anfangspopulation Nahrung
+    value: 50
+    range: [1, 111]
+
+simulation:
+  time_min: 10  # Mindestzeitraum
+  time_max: 500  # Höchstzeitraum
+  time_step: 10  # Zeitinkrement
