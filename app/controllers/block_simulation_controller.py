@@ -111,8 +111,7 @@ class BlockSimulationController:
 
                 # Calculate impuls
                 # p = m * v (v in direction of travel)
-                self.forces.impuls = self.model.width * (
-                    (self.forces.acceleration * (frame / self.time_per_frame)) * np.cos(np.radians(self.model.angle)))
+                self.forces.impuls = self.model.width * ((self.forces.acceleration * (frame / self.time_per_frame)) * np.cos(np.radians(self.model.angle)))
                 print(f'HIT -> Frame: {self.forces.collision_frame} Force: {self.forces.impuls}')
 
                 # Calculate start speed of collision block
@@ -127,6 +126,7 @@ class BlockSimulationController:
                 frame_delta = (frame - self.forces.collision_frame) / self.time_per_frame
                 next_frame_delta = ((frame+1) - self.forces.collision_frame) / self.time_per_frame
 
+                # Calculate progress (Weg-Zeit-Gesetz)
                 progress_collision = (self.model.block2_position[0] + self.forces.block2_velocity * frame_delta + 0.5 * self.forces.block2_acceleration * frame_delta ** 2)
                 next_collision = (self.model.block2_position[0] + self.forces.block2_velocity * next_frame_delta + 0.5 * self.forces.block2_acceleration * next_frame_delta ** 2)
 
