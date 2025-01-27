@@ -4,7 +4,7 @@ Simulation exercise for the Math III Module at the Bremen University of Applied 
 ## Installation
 1. Clone the code:
 ```
-git clone https://github.com/kenoalbers/quickbuild-api.git
+git clone https://github.com/kenoalbers/hminf-simulation.git
 ```
 
 2. Create a virtual environment:
